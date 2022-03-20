@@ -1,11 +1,11 @@
-﻿using Snake.Model;
+﻿using Snake.Common;
+using Snake.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Snake.Model;
 
 namespace Snake.ViewModel
 {
@@ -22,7 +22,6 @@ namespace Snake.ViewModel
         public SnakeViewModel()
         {
             SnakeGameLogic = new SnakeGame();
-
             UpKeyPressedCommand = new DelegateCommand(OnUpKeyPressed);
             RightKeyPressedCommand = new DelegateCommand(OnRightKeyPressed);
             DownKeyPressedCommand = new DelegateCommand(OnDownKeyPressed);

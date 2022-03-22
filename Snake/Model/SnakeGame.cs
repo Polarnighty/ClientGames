@@ -18,6 +18,37 @@ namespace Snake.Model
         private int _restartCountdownSeconds;
         private DispatcherTimer _restartTimer;
 
+        private void HitBoundaryEventHandler()
+        {
+            IsGameOver = true;
+        }
+
+        /// <summary>
+        /// The HitSnakeEventHandler is called to process an OnHitSnake event.
+        /// </summary>
+        private void HitSnakeEventHandler()
+        {
+            IsGameOver = true;
+        }
+        private void EatCherryEventHandler()
+        {
+            //// Move the cherry to a new location, away from the snake.
+            //TheCherry.MoveCherry(TheSnake);
+
+            //// Increase the game level and speed.
+            //_gameLevel++;
+            //RaisePropertyChanged(nameof(TitleText));
+            //if (_gameLevel < Constants.EndLevel)
+            //{
+            //    _gameStepMilliSeconds = _gameStepMilliSeconds - Constants.DecreaseGameStepMilliSeconds;
+            //    _gameTimer.Interval = TimeSpan.FromMilliseconds(_gameStepMilliSeconds);
+            //}
+            //else
+            //{
+            //    // Maximum level reached - game is complete.
+            //    IsGameOver = true;
+            //}
+        }
         public SnakeGame()
         {
             // Initialise the game board.
@@ -47,6 +78,20 @@ namespace Snake.Model
                 RaisePropertyChanged();
             }
         }
+        public double GameBoardHeightPixels
+        {
+            get
+            {
+                return (int)_gameBoardHeightPixels;
+            }
+            set
+            {
+                _gameBoardHeightPixels = value;
+                RaisePropertyChanged();
+
+                TheSnake.GameBoardHeightPixels = value;
+            }
+        }
 
         public double GameBoardWidthPixels
         {
@@ -62,7 +107,6 @@ namespace Snake.Model
                 TheSnake.GameBoardWidthPixels = value;
             }
         }
-
 
         /// <summary>
         /// Gets or sets the game over boolean flag.

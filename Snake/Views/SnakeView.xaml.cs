@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Snake.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,8 +25,8 @@ namespace Snake.Views
             InitializeComponent();
 
             // Create the View Model.
-            var viewModel = new SnakeViewModel();
-            DataContext = viewModel;    // Set the data context for all data binding operations.
+            var viewModel = new SnakeViewModel(); 
+             DataContext = viewModel;    // Set the data context for all data binding operations.
 
         }
     }

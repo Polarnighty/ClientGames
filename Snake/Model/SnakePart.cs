@@ -3,13 +3,18 @@
     public abstract class SnakePart: GameBoardItem
     {
         protected Direction _directionOfTravel;
+        public SnakePart()
+        {
+        }
 
         public SnakePart(double gameBoardWidthPixels, double gameBoardHeightPixels, Direction direction)
          : base(gameBoardWidthPixels, gameBoardHeightPixels)
         {
             _directionOfTravel = direction;
         }
-
+        /// <summary>
+        /// 蛇头当前朝向
+        /// </summary>
         public Direction DirectionOfTravel
         {
             get
@@ -23,7 +28,9 @@
                 RaisePropertyChanged(nameof(DirectionOfTravelDegrees));
             }
         }
-
+        /// <summary>
+        /// 蛇头朝向
+        /// </summary>
         public double DirectionOfTravelDegrees
         {
             get

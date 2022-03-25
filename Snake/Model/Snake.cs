@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Snake.Common;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,21 +10,71 @@ using System.Windows.Data;
 
 namespace Snake.Model
 {
-    public class Snake
+    public class Snake : NotificationBase
     {
         private double _gameBoardWidthPixels;
         private double _gameBoardHeightPixels;
         private ObservableCollection<SnakeBodyPart> _snakeBody;
         private volatile bool _updatingSnake;
         private static object _itemsLock = new object();
-        public SnakeHead TheSnakeHead { get; }
-        public SnakeEye TheSnakeEye { get; }
-        public double GameBoardHeightPixels { get; internal set; }
-        public double GameBoardWidthPixels { get; internal set; }
+
 
         public static event HitBoundary OnHitBoundary;
         public static event HitSnake OnHitSnake;
         public static event EatCherry OnEatCherry;
+
+
+        /// <summary>
+        /// 获取游戏宽度
+        /// </summary>
+        public double GameBoardWidthPixels
+        {
+            get
+            {
+                return _gameBoardWidthPixels;
+            }
+            set
+            {
+                _gameBoardWidthPixels = value;
+                RaisePropertyChanged();
+
+                // 更新蛇
+                TheSnakeHead.GameBoardWidthPixels = value;
+                TheSnakeEye.GameBoardWidthPixels = value;
+                foreach (SnakeBodyPart bodyPart in _snakeBody)
+                {
+                    bodyPart.GameBoardWidthPixels = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 获取游戏高度
+        /// </summary>
+        public double GameBoardHeightPixels
+        {
+            get
+            {
+                return _gameBoardHeightPixels;
+            }
+            set
+            {
+                _gameBoardHeightPixels = value;
+                RaisePropertyChanged();
+
+                // Update the snake.
+                TheSnakeHead.GameBoardHeightPixels = value;
+                TheSnakeEye.GameBoardHeightPixels = value;
+                foreach (SnakeBodyPart bodyPart in _snakeBody)
+                {
+                    bodyPart.GameBoardHeightPixels = value;
+                }
+            }
+        }
+
+        public SnakeHead TheSnakeHead { get; }
+
+        public SnakeEye TheSnakeEye { get; }
 
         public ObservableCollection<SnakeBodyPart> TheSnakeBody
         {
@@ -38,6 +89,12 @@ namespace Snake.Model
             }
         }
 
+
+        /// <summary>
+        /// 绘制画板
+        /// </summary>
+        /// <param name="gameBoardWidthPixels"></param>
+        /// <param name="gameBoardHeightPixels"></param>
         public Snake(double gameBoardWidthPixels, double gameBoardHeightPixels)
         {
             _gameBoardWidthPixels = gameBoardWidthPixels;
@@ -49,6 +106,10 @@ namespace Snake.Model
             _updatingSnake = false;
         }
 
+        /// <summary>
+        /// 设置蛇头朝向
+        /// </summary>
+        /// <param name="direction"></param>
         public void SetSnakeDirection(Direction direction)
         {
             while (_updatingSnake)

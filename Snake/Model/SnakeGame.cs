@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using Snake.Common;
+using System;
 using System.Windows.Threading;
 
 namespace Snake.Model
@@ -18,49 +19,43 @@ namespace Snake.Model
         private int _restartCountdownSeconds;
         private DispatcherTimer _restartTimer;
 
-        private void HitBoundaryEventHandler()
+
+        /// <summary>
+        /// 获取游戏宽度
+        /// </summary>
+        public double GameBoardWidthPixels
         {
-            IsGameOver = true;
+            get
+            {
+                return (int)_gameBoardWidthPixels;
+            }
+            set
+            {
+                _gameBoardWidthPixels = value;
+                RaisePropertyChanged();
+
+                TheSnake.GameBoardWidthPixels = value;
+            }
         }
 
         /// <summary>
-        /// The HitSnakeEventHandler is called to process an OnHitSnake event.
+        /// 获取游戏高度
         /// </summary>
-        private void HitSnakeEventHandler()
+        public double GameBoardHeightPixels
         {
-            IsGameOver = true;
-        }
-        private void EatCherryEventHandler()
-        {
-            //// Move the cherry to a new location, away from the snake.
-            //TheCherry.MoveCherry(TheSnake);
+            get
+            {
+                return (int)_gameBoardHeightPixels;
+            }
+            set
+            {
+                _gameBoardHeightPixels = value;
+                RaisePropertyChanged();
 
-            //// Increase the game level and speed.
-            //_gameLevel++;
-            //RaisePropertyChanged(nameof(TitleText));
-            //if (_gameLevel < Constants.EndLevel)
-            //{
-            //    _gameStepMilliSeconds = _gameStepMilliSeconds - Constants.DecreaseGameStepMilliSeconds;
-            //    _gameTimer.Interval = TimeSpan.FromMilliseconds(_gameStepMilliSeconds);
-            //}
-            //else
-            //{
-            //    // Maximum level reached - game is complete.
-            //    IsGameOver = true;
-            //}
+                TheSnake.GameBoardHeightPixels = value;
+            }
         }
-        public SnakeGame()
-        {
-            // Initialise the game board.
-            GameBoardWidthPixels = Constants.DefaultGameBoardWidthPixels;
-            GameBoardHeightPixels = Constants.DefaultGameBoardHeightPixels;
 
-            // Listen for events from the snake.
-            Snake.OnHitBoundary += new HitBoundary(HitBoundaryEventHandler);
-            Snake.OnHitSnake += new HitSnake(HitSnakeEventHandler);
-            Snake.OnEatCherry += new EatCherry(EatCherryEventHandler);
-
-        }
         public Snake TheSnake
         {
             get
@@ -78,39 +73,33 @@ namespace Snake.Model
                 RaisePropertyChanged();
             }
         }
-        public double GameBoardHeightPixels
+
+        public Cherry TheCherry
         {
             get
             {
-                return (int)_gameBoardHeightPixels;
-            }
-            set
-            {
-                _gameBoardHeightPixels = value;
-                RaisePropertyChanged();
+                if (_theCherry == null)
+                {
+                    _theCherry = new Cherry(_gameBoardWidthPixels, _gameBoardHeightPixels, TheSnake.TheSnakeHead.XPosition, TheSnake.TheSnakeHead.YPosition);
+                }
 
-                TheSnake.GameBoardHeightPixels = value;
+                return _theCherry;
+            }
+            private set
+            {
+                _theCherry = value;
+                RaisePropertyChanged();
             }
         }
 
-        public double GameBoardWidthPixels
+        public string TitleText
         {
             get
             {
-                return (int)_gameBoardWidthPixels;
-            }
-            set
-            {
-                _gameBoardWidthPixels = value;
-                RaisePropertyChanged();
-
-                TheSnake.GameBoardWidthPixels = value;
+                return "Snake " + _gameLevel + "/" + Constants.EndLevel;
             }
         }
 
-        /// <summary>
-        /// Gets or sets the game over boolean flag.
-        /// </summary>
         public bool IsGameOver
         {
             get
@@ -125,14 +114,135 @@ namespace Snake.Model
             }
         }
 
-        /// <summary>
-        /// Gets the game running boolean flag.
-        /// </summary>
         public bool IsGameRunning
         {
             get
             {
                 return !IsGameOver;
+            }
+        }
+
+        /// <summary>
+        /// 重置计时器
+        /// </summary>
+        public int RestartCountdownSeconds
+        {
+            get
+            {
+                return _restartCountdownSeconds;
+            }
+            private set
+            {
+                _restartCountdownSeconds = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private void HitBoundaryEventHandler()
+        {
+            IsGameOver = true;
+        }
+
+        public SnakeGame()
+        {
+            // Initialise the game board.
+            GameBoardWidthPixels = Constants.DefaultGameBoardWidthPixels;
+            GameBoardHeightPixels = Constants.DefaultGameBoardHeightPixels;
+
+            // Listen for events from the snake.
+            Snake.OnHitBoundary += new HitBoundary(HitBoundaryEventHandler);
+            Snake.OnHitSnake += new HitSnake(HitSnakeEventHandler);
+            Snake.OnEatCherry += new EatCherry(EatCherryEventHandler);
+
+            StartNewGame();
+        }
+
+        #region 游戏开始与结束
+        /// <summary>
+        /// The HitSnakeEventHandler is called to process an OnHitSnake event.
+        /// </summary>
+        private void HitSnakeEventHandler()
+        {
+            IsGameOver = true;
+        }
+
+        private void GameTimerEventHandler(object sender, EventArgs e)
+        {
+            if (IsGameOver)
+            {
+                // 游戏结束
+                if (_gameTimer.IsEnabled)
+                {
+                    _gameTimer.Stop();  // 停止计时
+                    RestartGame();      // 重启游戏
+                }
+            }
+            else
+            {
+                // 游戏运行,更新樱桃位置
+                TheSnake.UpdateSnakeStatus(TheCherry);
+            }
+        }
+        private void RestartGame()
+        {
+            // 初始化倒计时
+            RestartCountdownSeconds = Constants.RestartCountdownStartSeconds;
+            _restartTimer = new DispatcherTimer();
+            _restartTimer.Interval = TimeSpan.FromMilliseconds(Constants.RestartStepMilliSeconds);
+            _restartTimer.Tick += new EventHandler(RestartTimerEventHandler);
+            _restartTimer.Start();
+        }
+        private void RestartTimerEventHandler(object sender, EventArgs e)
+        {
+            RestartCountdownSeconds--;
+
+            if (RestartCountdownSeconds == 0)
+            {
+                _restartTimer.Stop();   // Stop the restart timer.
+                StartNewGame();         // Start a new game.
+            }
+        }
+
+        private void StartNewGame()
+        {
+            // 初始化蛇和樱桃
+            TheSnake = new Snake(_gameBoardWidthPixels, _gameBoardHeightPixels);
+            TheCherry = new Cherry(_gameBoardWidthPixels, _gameBoardHeightPixels, TheSnake.TheSnakeHead.XPosition, TheSnake.TheSnakeHead.YPosition);
+
+            // Set the game over flag.
+            IsGameOver = false;
+
+            // Reset the restart timer.
+            RestartCountdownSeconds = Constants.RestartCountdownStartSeconds;
+
+            // Initialise the game timer.
+            _gameLevel = Constants.StartLevel;
+            RaisePropertyChanged(nameof(TitleText));
+            _gameStepMilliSeconds = Constants.DefaultGameStepMilliSeconds;
+            _gameTimer = new DispatcherTimer();
+            _gameTimer.Interval = TimeSpan.FromMilliseconds(_gameStepMilliSeconds);
+            _gameTimer.Tick += new EventHandler(GameTimerEventHandler);
+            _gameTimer.Start();
+        }
+        #endregion
+
+        private void EatCherryEventHandler()
+        {
+            // Move the cherry to a new location, away from the snake.
+            TheCherry.MoveCherry(TheSnake);
+
+            // Increase the game level and speed.
+            _gameLevel++;
+            RaisePropertyChanged(nameof(TitleText));
+            if (_gameLevel < Constants.EndLevel)
+            {
+                _gameStepMilliSeconds = _gameStepMilliSeconds - Constants.DecreaseGameStepMilliSeconds;
+                _gameTimer.Interval = TimeSpan.FromMilliseconds(_gameStepMilliSeconds);
+            }
+            else
+            {
+                // Maximum level reached - game is complete.
+                IsGameOver = true;
             }
         }
 

@@ -9,12 +9,8 @@ using System.Windows.Input;
 
 namespace Snake.ViewModel
 {
-    public class SnakeViewModel
+    public class SnakeViewModel :NotificationBase
     {
-        #region Fields
-        #endregion
-
-        #region Constructors
 
         /// <summary>
         /// Default constructor.
@@ -27,13 +23,6 @@ namespace Snake.ViewModel
             DownKeyPressedCommand = new DelegateCommand(OnDownKeyPressed);
             LeftKeyPressedCommand = new DelegateCommand(OnLeftKeyPressed);
         }
-
-        #endregion
-
-        #region Events
-        #endregion
-
-        #region Properties
 
         /// <summary>
         /// Gets the snake game logic.
@@ -76,9 +65,7 @@ namespace Snake.ViewModel
             private set;
         }
 
-        #endregion
 
-        #region Methods
 
         /// <summary>
         /// The OnUpKeyPressed method is called when the UpKeyPressedCommand is triggered.
@@ -132,6 +119,5 @@ namespace Snake.ViewModel
             }
         }
 
-        #endregion
     }
 }

@@ -36,46 +36,44 @@
             get
             {
                 double direction = 0;
-                switch (_directionOfTravel)
+                if (_directionOfTravel == Direction.Up)
                 {
-                    case Direction.Up:
-                        direction = Constants.DirectionUpDegrees;
-                        break;
-                    case Direction.Down:
-                        direction = Constants.DirectionDownDegrees;
-                        break;
-                    case Direction.Left:
-                        direction = Constants.DirectionLeftDegrees;
-                        break;
-                    case Direction.Right:
-                        direction = Constants.DirectionRightDegrees;
-                        break;
-                    default:
-                        break;
-                }               
+                    direction = Constants.DirectionUpDegrees;
+                }
+                else if (_directionOfTravel == Direction.Right)
+                {
+                    direction = Constants.DirectionRightDegrees;
+                }
+                else if (_directionOfTravel == Direction.Down)
+                {
+                    direction = Constants.DirectionDownDegrees;
+                }
+                else if (_directionOfTravel == Direction.Left)
+                {
+                    direction = Constants.DirectionLeftDegrees;
+                }
                 return direction;
             }
         }
 
         public void UpdatePosition()
         {
-            switch (_directionOfTravel)
+            if (_directionOfTravel == Direction.Up)
             {
-                case Direction.Up:
-                    YPosition = YPosition - Constants.StepSize;
-                    break;
-                case Direction.Down:
-                    YPosition = YPosition + Constants.StepSize;
-                    break;
-                case Direction.Left:
-                    XPosition = XPosition - Constants.StepSize;
-                    break;
-                case Direction.Right:
-                    XPosition = XPosition + Constants.StepSize;
-                    break;
-                default:
-                    break;
-            }  
+                YPosition = YPosition - Constants.StepSize;
+            }
+            else if (_directionOfTravel == Direction.Right)
+            {
+                XPosition = XPosition + Constants.StepSize;
+            }
+            else if (_directionOfTravel == Direction.Down)
+            {
+                YPosition = YPosition + Constants.StepSize;
+            }
+            else if (_directionOfTravel == Direction.Left)
+            {
+                XPosition = XPosition - Constants.StepSize;
+            }
         }
 
     }

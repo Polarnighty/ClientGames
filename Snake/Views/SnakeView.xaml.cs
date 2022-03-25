@@ -24,10 +24,9 @@ namespace Snake.Views
         {
             InitializeComponent();
 
-            // Create the View Model.
-            var viewModel = new SnakeViewModel(); 
-             DataContext = viewModel;    // Set the data context for all data binding operations.
-
+            SnakeViewModel viewModel = new SnakeViewModel();
+            DataContext = viewModel;
         }
+
     }
 }

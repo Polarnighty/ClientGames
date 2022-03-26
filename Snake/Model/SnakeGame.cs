@@ -145,11 +145,11 @@ namespace Snake.Model
 
         public SnakeGame()
         {
-            // Initialise the game board.
+            // 初始化游戏界面
             GameBoardWidthPixels = Constants.DefaultGameBoardWidthPixels;
             GameBoardHeightPixels = Constants.DefaultGameBoardHeightPixels;
 
-            // Listen for events from the snake.
+            // 监听贪吃蛇事件
             Snake.OnHitBoundary += new HitBoundary(HitBoundaryEventHandler);
             Snake.OnHitSnake += new HitSnake(HitSnakeEventHandler);
             Snake.OnEatCherry += new EatCherry(EatCherryEventHandler);
@@ -198,8 +198,8 @@ namespace Snake.Model
 
             if (RestartCountdownSeconds == 0)
             {
-                _restartTimer.Stop();   // Stop the restart timer.
-                StartNewGame();         // Start a new game.
+                _restartTimer.Stop();   // 停止倒计时
+                StartNewGame();         // 开始一个新游戏
             }
         }
 
@@ -209,13 +209,13 @@ namespace Snake.Model
             TheSnake = new Snake(_gameBoardWidthPixels, _gameBoardHeightPixels);
             TheCherry = new Cherry(_gameBoardWidthPixels, _gameBoardHeightPixels, TheSnake.TheSnakeHead.XPosition, TheSnake.TheSnakeHead.YPosition);
 
-            // Set the game over flag.
+            // 设置游戏结束标志
             IsGameOver = false;
 
-            // Reset the restart timer.
+            // 重置重启计时器。
             RestartCountdownSeconds = Constants.RestartCountdownStartSeconds;
 
-            // Initialise the game timer.
+            // 初始化计时器
             _gameLevel = Constants.StartLevel;
             RaisePropertyChanged(nameof(TitleText));
             _gameStepMilliSeconds = Constants.DefaultGameStepMilliSeconds;
@@ -228,10 +228,10 @@ namespace Snake.Model
 
         private void EatCherryEventHandler()
         {
-            // Move the cherry to a new location, away from the snake.
+            // 将樱桃刷新在远离蛇的位置
             TheCherry.MoveCherry(TheSnake);
 
-            // Increase the game level and speed.
+            // 提高游戏等级和速度
             _gameLevel++;
             RaisePropertyChanged(nameof(TitleText));
             if (_gameLevel < Constants.EndLevel)
@@ -241,7 +241,7 @@ namespace Snake.Model
             }
             else
             {
-                // Maximum level reached - game is complete.
+                // 游戏胜利
                 IsGameOver = true;
             }
         }

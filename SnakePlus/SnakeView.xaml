@@ -5,10 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SnakePlus"
         mc:Ignorable="d"  
-        Title="SnakeWPF - Score: 0" SizeToContent="WidthAndHeight" ContentRendered="Window_ContentRendered">
-    <Border BorderBrush="Black" BorderThickness="5">
-        <Canvas Name="GameArea" ClipToBounds="True" Width="500" Height="500">
+        Title="SnakeWPF - Score: 0" SizeToContent="WidthAndHeight" ContentRendered="Window_ContentRendered" KeyUp="Window_KeyUp"
+        ResizeMode="NoResize" WindowStyle="None" Background="Black" MouseDown="Window_MouseDown">
+        <Border BorderBrush="Black" BorderThickness="5" Height="536" Width="510" >
+            <Canvas Name="GameArea" ClipToBounds="True" Width="500" Height="500">
 
-        </Canvas>
-    </Border>
+            </Canvas>
+        </Border>
 </Window>

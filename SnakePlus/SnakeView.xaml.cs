@@ -91,6 +91,17 @@ namespace SnakePlus
 
         }
 
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void UpdateGameStatus()
+        {
+            this.tbStatusScore.Text = currentScore.ToString();
+            this.tbStatusSpeed.Text = gameTickTimer.Interval.TotalMilliseconds.ToString();
+        }
+
         private void Window_KeyUp(object sender, KeyEventArgs e)
         {
             SnakeDirection originalSnakeDirection = snakeDirection;
@@ -158,10 +169,6 @@ namespace SnakePlus
             UpdateGameStatus();
         }
 
-        private void UpdateGameStatus()
-        {
-            Title = "SnakeWPF - Score: " + currentScore + " - Game speed: " + gameTickTimer.Interval.TotalMilliseconds;
-        }
 
 
         private void EndGame()
